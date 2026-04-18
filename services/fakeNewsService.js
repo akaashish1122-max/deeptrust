@@ -10,18 +10,15 @@ async function analyzeFakeNews(text, options = {}) {
     return null;
   }
 
-  const ollamaResult = await analyzeClaimWithOllama(normalizedText);
-  const verdict = String(ollamaResult?.label || "MISLEADING").toUpperCase();
+  const analysis = await analyzeClaimWithOllama(normalizedText);
 
   return {
     claim: normalizedText,
-    status: verdict,
-    label: verdict,
-    result: verdict,
-    explanation: ollamaResult?.reason || "No explanation provided.",
+    verdict: analysis.verdict,
+    explanation: analysis.explanation,
+    result: analysis.raw,
     source: "ollama",
-    model: "phi3:mini",
-    rawResult: ollamaResult?.raw || "",
+    model: process.env.OLLAMA_MODEL || "mistral:latest",
     mode: options.mode || "simple",
   };
 }
